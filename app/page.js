@@ -167,22 +167,22 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: "MealMate",
-                desc: "Help to make a proper diet plan",
-                img: "/images/img1.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=10-2",
-              },
-              {
-                title: "Good Food",
-                desc: "Order your healthy and tasty food",
+                title: "Stock Flash",
+                desc: "An intelligent stock trading platform designed to deliver real-time insights and seamless portfolio management.",
                 img: "/images/img2.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=313-215",
+                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=424-253",
               },
               {
-                title: "Dream Trip",
-                desc: "Turn your Dream Trip into Reality",
+                title: "Edu Spark",
+                desc: "A personalized learning platform empowering students with adaptive courses and AI-driven progress tracking.",
                 img: "/images/img3.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=179-70",
+                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=506-33",
+              },
+              {
+                title: "Fin Flow",
+                desc: "A smart finance management app enabling users to track, analyze, and optimize their spending effortlessly.",
+                img: "/images/img1.png",
+                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=671-19",
               },
               {
                 title: "Money Master",
