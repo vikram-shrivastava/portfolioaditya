@@ -139,14 +139,14 @@ export default function Home() {
           >
             <div>
               <h2 className="text-3xl font-bold text-white mb-6">About Me</h2>
-              <p className="text-gray-300 leading-relaxed">
+              <div className="text-gray-300 leading-relaxed">
                 <p>Hi, I’m <b>Aditya Shrivastav</b>, a passionate <b>UI/UX Designer</b> who loves creating clean, functional, and user-friendly digital experiences. I enjoy turning ideas into designs that not only look good but also solve real user problems.</p>
 
                 <p>I’ve completed multiple <b>UI/UX certifications</b> from reputed institutions and continue to expand my skills every day. I’m a <b>self-learner</b> who believes the best way to grow is by building — and that’s why I’m constantly working on new design projects to improve my craft.</p>
 
                 <p>Whether it’s designing wireframes, prototypes, or full-fledged interfaces in <b>Figma</b>, I focus on creating seamless experiences that balance creativity and usability.</p>
 
-              </p>
+              </div>
             </div>
             <motion.div variants={fadeInUp}>
               <h3 className="text-2xl font-bold text-white mb-6">My Skills</h3>
@@ -184,37 +184,42 @@ export default function Home() {
             My Projects
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((proj, i) => (
-              <motion.a
-                key={proj.title}
-                href={proj.figmaLink}
-                target="_blank"
-                rel="noreferrer"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
-                viewport={{ once: true }}
-              >
-                <div className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1b2a4a] h-80">
-                  <div className="flex items-center justify-center h-full">
-                    <Image
-                      src={proj.image}
-                      alt={proj.title}
-                      width={400}
-                      height={300}
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+            {projects && projects.length > 0 ? (
+              projects.map((proj, i) => (
+                <motion.a
+                  key={proj.title}
+                  href={proj.figmaLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.1, duration: 0.4 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1b2a4a] h-80">
+                    <div className="flex items-center justify-center h-full">
+                      <Image
+                        src={proj.image}
+                        alt={proj.title}
+                        width={400}
+                        height={300}
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition">
+                      <h3 className="text-xl font-bold text-white">{proj.title}</h3>
+                      <p className="text-gray-300 text-sm">{proj.description}</p>
+                    </div>
                   </div>
-                  <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition">
-                    <h3 className="text-xl font-bold text-white">
-                      {proj.title}
-                    </h3>
-                    <p className="text-gray-300 text-sm">{proj.description}</p>
-                  </div>
-                </div>
-              </motion.a>
-            ))}
+                </motion.a>
+              ))
+            ) : (
+              <div className="col-span-full flex justify-center items-center h-64">
+                <p className="text-gray-400 text-lg animate-pulse">Loading projects...</p>
+              </div>
+            )}
           </div>
+
         </section>
 
         {/* Contact */}
