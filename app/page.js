@@ -2,13 +2,13 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaInstagram, FaEnvelope } from "react-icons/fa";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const [projects, setProjects] = useState([]);
   // Animation Variants
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
@@ -19,6 +19,21 @@ export default function Home() {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
   };
+
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/api/getallprojects');
+        const data = await response.json();
+        console.log(data);
+        setProjects(data.projects || []);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a1a2f] overflow-x-hidden">
@@ -125,8 +140,12 @@ export default function Home() {
             <div>
               <h2 className="text-3xl font-bold text-white mb-6">About Me</h2>
               <p className="text-gray-300 leading-relaxed">
-                I&apos;m a UI/UX designer passionate about creating intuitive and
-                visually appealing digital experiences...
+                <p>Hi, I’m <b>Aditya Shrivastav</b>, a passionate <b>UI/UX Designer</b> who loves creating clean, functional, and user-friendly digital experiences. I enjoy turning ideas into designs that not only look good but also solve real user problems.</p>
+
+                <p>I’ve completed multiple <b>UI/UX certifications</b> from reputed institutions and continue to expand my skills every day. I’m a <b>self-learner</b> who believes the best way to grow is by building — and that’s why I’m constantly working on new design projects to improve my craft.</p>
+
+                <p>Whether it’s designing wireframes, prototypes, or full-fledged interfaces in <b>Figma</b>, I focus on creating seamless experiences that balance creativity and usability.</p>
+
               </p>
             </div>
             <motion.div variants={fadeInUp}>
@@ -165,47 +184,10 @@ export default function Home() {
             My Projects
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Stock Flash",
-                desc: "An intelligent stock trading platform designed to deliver real-time insights and seamless portfolio management.",
-                img: "/images/img2.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=424-253",
-              },
-              {
-                title: "Edu Spark",
-                desc: "A personalized learning platform empowering students with adaptive courses and AI-driven progress tracking.",
-                img: "/images/img3.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=506-33",
-              },
-              {
-                title: "Fin Flow",
-                desc: "A smart finance management app enabling users to track, analyze, and optimize their spending effortlessly.",
-                img: "/images/img1.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=671-19",
-              },
-              {
-                title: "Money Master",
-                desc: "Your Personal Finance Assistant",
-                img: "/images/img4.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=140-2",
-              },
-              {
-                title: "SpendWise",
-                desc: "Your Personal Finance Assistant V-2.0",
-                img: "/images/img5.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=389-187",
-              },
-              {
-                title: "StudyFocus",
-                desc: "Your Personal Guide for Study",
-                img: "/images/img6.png",
-                link: "https://www.figma.com/design/dLUAMA8STqY9qVeT42r1mv/Untitled?node-id=355-27",
-              },
-            ].map((proj, i) => (
+            {projects.map((proj, i) => (
               <motion.a
                 key={proj.title}
-                href={proj.link}
+                href={proj.figmaLink}
                 target="_blank"
                 rel="noreferrer"
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -216,7 +198,7 @@ export default function Home() {
                 <div className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1b2a4a] h-80">
                   <div className="flex items-center justify-center h-full">
                     <Image
-                      src={proj.img}
+                      src={proj.image}
                       alt={proj.title}
                       width={400}
                       height={300}
@@ -227,7 +209,7 @@ export default function Home() {
                     <h3 className="text-xl font-bold text-white">
                       {proj.title}
                     </h3>
-                    <p className="text-gray-300 text-sm">{proj.desc}</p>
+                    <p className="text-gray-300 text-sm">{proj.description}</p>
                   </div>
                 </div>
               </motion.a>
