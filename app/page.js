@@ -103,7 +103,7 @@ export default function Home() {
               </a>
             ))}
              <a href="mailto:adityas131204@gmail.com" className="px-5 py-2 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all text-sm font-medium">
-              Let's Talk
+              Let&apos;s Talk
             </a>
           </nav>
 
@@ -152,7 +152,7 @@ export default function Home() {
             </motion.h1>
             
             <motion.p variants={fadeInUp} className="text-lg md:text-2xl text-gray-400 max-w-2xl mb-10 leading-relaxed">
-              I'm Aditya Shrivastav, a UI/UX Designer obsessed with clarity, aesthetics, and user behavior.
+              I&apos;m Aditya Shrivastav, a UI/UX Designer obsessed with clarity, aesthetics, and user behavior.
             </motion.p>
 
             <motion.div variants={fadeInUp} className="flex gap-4 mb-6">
@@ -212,7 +212,7 @@ export default function Home() {
                     <h3 className="text-3xl md:text-4xl font-bold mb-6">Bridging the gap between <br/><span className="text-gray-500">Logic</span> and <span className="text-white">Magic</span>.</h3>
                     <div className="space-y-6 text-gray-400 text-lg leading-relaxed">
                         <p>
-                            I don't just move pixels around; I solve problems. My design philosophy is rooted in empathy—understanding the user's journey to create interfaces that are intuitive, accessible, and delightful.
+                            I don&apos;t just move pixels around; I solve problems. My design philosophy is rooted in empathy—understanding the user&apos;s journey to create interfaces that are intuitive, accessible, and delightful.
                         </p>
                         <p>
                             With a strong foundation in modern design tools and a constant hunger to learn, I help brands translate complex ideas into clean, functional digital products.
@@ -243,7 +243,7 @@ export default function Home() {
             >
                 <div>
                     <h2 className="text-4xl md:text-5xl font-bold mb-4">Selected Works</h2>
-                    <p className="text-gray-400">A curated list of projects I've worked on.</p>
+                    <p className="text-gray-400">A curated list of projects I&apos;ve worked on.</p>
                 </div>
             </motion.div>
 
@@ -301,8 +301,8 @@ export default function Home() {
             >
                 <h2 className="text-5xl md:text-7xl font-bold mb-8">Have an idea?</h2>
                 <p className="text-xl text-gray-400 mb-12">
-                    I'm currently available for freelance work and open to new opportunities. 
-                    Let's create something meaningful together.
+                    I&apos;m currently available for freelance work and open to new opportunities. 
+                    Let&apos;s create something meaningful together.
                 </p>
                 <div className="flex flex-wrap justify-center gap-6">
                      <a 
