@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "cloudinary": "^2.8.0",
-    "framer-motion": "^12.23.12",
+    "framer-motion": "^12.23.25",
     "mongoose": "^8.19.2",
     "next": "15.5.2",
     "next-cloudinary": "^6.16.1",

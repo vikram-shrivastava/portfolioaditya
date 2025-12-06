@@ -1,280 +1,329 @@
-// app/page.js
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { FaInstagram, FaEnvelope } from "react-icons/fa";
+import { useEffect, useState, useRef } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { FaInstagram, FaEnvelope, FaBehance, FaDribbble, FaArrowRight } from "react-icons/fa";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [projects, setProjects] = useState([]);
-  // Animation Variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-  };
+  const [cursorXY, setCursorXY] = useState({ x: -100, y: -100 });
+  const [loading, setLoading] = useState(true);
 
-  const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
-  };
+  // Scroll Progress Logic
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
+  // Mouse Follower Logic
+  useEffect(() => {
+    const moveCursor = (e) => {
+      setCursorXY({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', moveCursor);
+    return () => {
+      window.removeEventListener('mousemove', moveCursor);
+    };
+  }, []);
 
+  // Fetch Projects
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await fetch('/api/getallprojects');
         const data = await response.json();
-        console.log(data);
         setProjects(data.projects || []);
       } catch (error) {
         console.error('Error fetching projects:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProjects();
   }, []);
 
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 60 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+  };
+
+  const staggerContainer = {
+    visible: { transition: { staggerChildren: 0.1 } }
+  };
+
   return (
-    <div className="relative flex min-h-screen flex-col bg-[#0a1a2f] overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden selection:bg-purple-500 selection:text-white font-sans">
+      
+      {/* Custom Cursor (Hidden on Touch) */}
+      <div 
+        className="fixed top-0 left-0 w-8 h-8 border border-white rounded-full pointer-events-none z-[100] hidden md:block mix-blend-difference"
+        style={{ 
+          transform: `translate3d(${cursorXY.x - 16}px, ${cursorXY.y - 16}px, 0)` 
+        }}
+      />
+      <div 
+        className="fixed top-0 left-0 w-2 h-2 bg-white rounded-full pointer-events-none z-[100] hidden md:block mix-blend-difference"
+        style={{ 
+          transform: `translate3d(${cursorXY.x - 4}px, ${cursorXY.y - 4}px, 0)` 
+        }}
+      />
+
+      {/* Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 origin-left z-[60]"
+        style={{ scaleX }}
+      />
+
+      {/* Background Noise Texture */}
+      <div className="fixed inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+
+      {/* Animated Background Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-b-[#2e3f65] bg-[#0a1a2f]/80 px-10 py-4 backdrop-blur-sm">
-        <Link href="/" className="flex items-center gap-3 text-white">
-          <motion.svg
-            initial={{ rotate: -90, opacity: 0 }}
-            animate={{ rotate: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="h-6 w-6 text-[#3b82f6]"
-            fill="none"
-            viewBox="0 0 48 48"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"
-              fill="currentColor"
-            />
-          </motion.svg>
-          <motion.h2
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="text-xl font-bold"
-          >
-            Aditya Shrivastav
-          </motion.h2>
-        </Link>
+      <header className="fixed top-0 w-full z-50 px-6 py-6 md:px-12 transition-all duration-300 backdrop-blur-md bg-black/10 border-b border-white/5 pb-2">
+        <div className="flex justify-between items-center max-w-7xl mx-auto">
+          <Link href="/" className="group flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-lg flex items-center justify-center font-bold text-lg">A</div>
+            <span className="font-bold tracking-tight text-xl group-hover:text-gray-300 transition-colors">Aditya.</span>
+          </Link>
 
-        <nav className="hidden md:flex gap-8">
-          {["About", "Projects", "Contact"].map((item, i) => (
-            <motion.a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
-              className="text-gray-300 hover:text-white text-sm font-medium"
-            >
-              {item}
-            </motion.a>
-          ))}
-        </nav>
+          <nav className="hidden md:flex gap-8 items-center">
+            {["About", "Projects", "Contact"].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-medium text-gray-400 hover:text-white transition-colors relative group">
+                {item}
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-white transition-all duration-300 group-hover:w-full"></span>
+              </a>
+            ))}
+             <a href="mailto:adityas131204@gmail.com" className="px-5 py-2 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all text-sm font-medium">
+              Let's Talk
+            </a>
+          </nav>
 
-        <button
-          className="md:hidden text-white"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          ☰
-        </button>
+          {/* Mobile Menu Toggle */}
+          <button className="md:hidden text-2xl" onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? '✕' : '☰'}
+          </button>
+        </div>
       </header>
 
-      <main className="flex-1">
+      {/* Mobile Menu Overlay */}
+      {menuOpen && (
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed inset-0 bg-[#050505] z-40 flex flex-col items-center justify-center gap-8 md:hidden"
+        >
+          {["About", "Projects", "Contact"].map((item) => (
+            <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenuOpen(false)} className="text-3xl font-bold hover:text-purple-500 transition-colors">
+              {item}
+            </a>
+          ))}
+        </motion.div>
+      )}
+
+      <main className="relative z-10 pt-20">
+        
         {/* Hero Section */}
-        <section
-          className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-cover bg-center bg-no-repeat px-4 py-16"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0,0,128,0.8), rgba(173,216,230,1)),
-              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%' height='100' viewBox='0 0 1440 320'%3E%3Cpath fill='%233b82f6' fill-opacity='1' d='M0,192L60,186.7C120,181,240,171,360,181.3C480,192,600,224,720,240C840,256,960,256,1080,240C1200,224,1320,192,1380,176L1440,160L1440,0L0,0Z'%3E%3C/path%3E%3C/svg%3E")
-            `,
-          }}
-        >
-          <motion.div
-            className="max-w-4xl text-center"
-            initial="hidden"
-            animate="visible"
-            variants={fadeInUp}
+        <section className="min-h-[90vh] flex flex-col justify-center px-6 md:px-12 max-w-7xl mx-auto">
+          <motion.div 
+            initial="hidden" 
+            animate="visible" 
+            variants={staggerContainer}
+            className="max-w-4xl"
           >
-            <h1 className="text-5xl md:text-7xl font-black text-white">
-              Aditya Shrivastav
-            </h1>
-            <motion.p
-              className="text-gray-300 text-lg md:text-xl mt-4"
-              variants={fadeInUp}
-            >
-              UI/UX Designer crafting beautiful and intuitive digital
-              experiences.
+            <motion.div variants={fadeInUp} className="flex items-center gap-3 mb-6">
+               <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span className="text-sm uppercase tracking-widest text-gray-400 font-medium">Available for Freelance</span>
+            </motion.div>
+
+            <motion.h1 variants={fadeInUp} className="text-5xl md:text-8xl font-bold leading-[1.1] mb-8 tracking-tight">
+              Designing <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-white">Digital Experiences</span> that feel human.
+            </motion.h1>
+            
+            <motion.p variants={fadeInUp} className="text-lg md:text-2xl text-gray-400 max-w-2xl mb-10 leading-relaxed">
+              I'm Aditya Shrivastav, a UI/UX Designer obsessed with clarity, aesthetics, and user behavior.
             </motion.p>
-            <motion.a
-              href="#projects"
-              className="inline-flex mt-8 h-12 px-6 rounded-full bg-[#3b82f6] text-white font-bold hover:bg-blue-600 transition items-center justify-center"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              View My Work
-            </motion.a>
-          </motion.div>
-        </section>
 
-        {/* About */}
-        <section
-          id="about"
-          className="px-4 md:px-10 lg:px-40 py-16 md:py-24 space-y-24"
-        >
-          <motion.div
-            className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 items-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={fadeInUp}
-          >
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-6">About Me</h2>
-              <div className="text-gray-300 leading-relaxed">
-                <p>Hi, I’m <b>Aditya Shrivastav</b>, a passionate <b>UI/UX Designer</b> who loves creating clean, functional, and user-friendly digital experiences. I enjoy turning ideas into designs that not only look good but also solve real user problems.</p>
-
-                <p>I’ve completed multiple <b>UI/UX certifications</b> from reputed institutions and continue to expand my skills every day. I’m a <b>self-learner</b> who believes the best way to grow is by building — and that’s why I’m constantly working on new design projects to improve my craft.</p>
-
-                <p>Whether it’s designing wireframes, prototypes, or full-fledged interfaces in <b>Figma</b>, I focus on creating seamless experiences that balance creativity and usability.</p>
-
-              </div>
-            </div>
-            <motion.div variants={fadeInUp}>
-              <h3 className="text-2xl font-bold text-white mb-6">My Skills</h3>
-              <div className="flex gap-3 flex-wrap">
-                {[
-                  "UI Design",
-                  "UX Design",
-                  "Prototyping",
-                  "User Research",
-                  "Wireframing",
-                  "Interaction Design",
-                ].map((skill, i) => (
-                  <motion.span
-                    key={skill}
-                    className="px-4 py-2 bg-[#1b2a4a] text-white rounded-full text-sm"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    viewport={{ once: true }}
-                  >
-                    {skill}
-                  </motion.span>
-                ))}
-              </div>
+            <motion.div variants={fadeInUp} className="flex gap-4 mb-6">
+              <a href="#projects" className="group relative px-8 py-4 rounded-full bg-white text-black font-bold text-lg overflow-hidden transition-all hover:scale-105">
+                <span className="relative z-10 flex items-center gap-2">View Work <FaArrowRight className="group-hover:translate-x-1 transition-transform"/></span>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </a>
             </motion.div>
           </motion.div>
         </section>
 
-        {/* Projects */}
-        <section
-          id="projects"
-          className="px-4 md:px-10 lg:px-40 py-16 md:py-24"
-        >
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
-            My Projects
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects && projects.length > 0 ? (
-              projects.map((proj, i) => (
-                <motion.a
-                  key={proj.title}
-                  href={proj.figmaLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.1, duration: 0.4 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="group relative flex flex-col overflow-hidden rounded-xl bg-[#1b2a4a] h-80">
-                    <div className="flex items-center justify-center h-full">
-                      <Image
-                        src={proj.image}
-                        alt={proj.title}
-                        width={400}
-                        height={300}
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
+        {/* Marquee Skills Section */}
+        <div className="w-full py-10 border-y border-white/5 bg-black/20 overflow-hidden mb-20">
+            <motion.div 
+                className="flex whitespace-nowrap"
+                animate={{ x: [0, -1000] }}
+                transition={{ repeat: Infinity, ease: "linear", duration: 20 }}
+            >
+                {[...Array(2)].map((_, i) => (
+                    <div key={i} className="flex gap-16 mx-8">
+                        {["UI Design", "UX Research", "Figma", "Prototyping", "Wireframing", "Adobe XD", "User Flow", "Interaction Design"].map((skill) => (
+                            <span key={skill} className="text-2xl md:text-4xl font-bold text-white/20 uppercase hover:text-purple-500/50 transition-colors cursor-default">
+                                {skill}
+                            </span>
+                        ))}
                     </div>
-                    <div className="absolute inset-0 bg-black/40 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition">
-                      <h3 className="text-xl font-bold text-white">{proj.title}</h3>
-                      <p className="text-gray-300 text-sm">{proj.description}</p>
+                ))}
+            </motion.div>
+        </div>
+
+        {/* About Section */}
+        <section id="about" className="px-6 md:px-12 max-w-7xl mx-auto py-20 mb-20">
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+                <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
+                >
+                    <div className="relative">
+                        <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur-lg opacity-40"></div>
+                        {/* Placeholder for Profile - Stylized */}
+                        <div className="relative h-[400px] w-full bg-[#111] rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden">
+                             <span className="text-9xl font-black text-white/5 select-none">AS</span>
+                             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                        </div>
                     </div>
-                  </div>
-                </motion.a>
-              ))
-            ) : (
-              <div className="col-span-full flex justify-center items-center h-64">
-                <p className="text-gray-400 text-lg animate-pulse">Loading projects...</p>
-              </div>
-            )}
-          </div>
+                </motion.div>
 
-        </section>
-
-        {/* Contact */}
-        <section
-          id="contact"
-          className="px-4 md:px-10 lg:px-40 py-16 md:py-24"
-        >
-          <motion.div
-            className="max-w-xl mx-auto text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={fadeInUp}
-          >
-            <h2 className="text-3xl font-bold text-white mb-4">Get in Touch</h2>
-            <p className="text-lg text-gray-300">
-              Let&rsquo;s connect! You can reach me on any of these platforms:
-            </p>
-            <div className="flex flex-wrap justify-center gap-6 mt-6">
-              <motion.div whileHover={{ scale: 1.1 }}>
-                <Link
-                  href="mailto:adityas131204@gmail.com"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#1b2a4a] border border-[#2e3f65] text-white hover:bg-[#3b82f6] hover:text-white transition"
+                <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
                 >
-                  <FaEnvelope /> Email
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.1 }}>
-                <Link
-                  href="https://instagram.com/adityashrivastava536"
-                  target="_blank"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#1b2a4a] border border-[#2e3f65] text-white hover:bg-[#3b82f6] hover:text-white transition"
-                >
-                  <FaInstagram /> Instagram
-                </Link>
-              </motion.div>
+                    <h2 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4">About Me</h2>
+                    <h3 className="text-3xl md:text-4xl font-bold mb-6">Bridging the gap between <br/><span className="text-gray-500">Logic</span> and <span className="text-white">Magic</span>.</h3>
+                    <div className="space-y-6 text-gray-400 text-lg leading-relaxed">
+                        <p>
+                            I don't just move pixels around; I solve problems. My design philosophy is rooted in empathy—understanding the user's journey to create interfaces that are intuitive, accessible, and delightful.
+                        </p>
+                        <p>
+                            With a strong foundation in modern design tools and a constant hunger to learn, I help brands translate complex ideas into clean, functional digital products.
+                        </p>
+                    </div>
+                    
+                    <div className="flex gap-6 mt-8">
+                        <div className="flex flex-col">
+                            <span className="text-3xl font-bold text-white">10+</span>
+                            <span className="text-sm text-gray-500 uppercase">Projects</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-3xl font-bold text-white">100%</span>
+                            <span className="text-sm text-gray-500 uppercase">Dedication</span>
+                        </div>
+                    </div>
+                </motion.div>
             </div>
-          </motion.div>
         </section>
+
+        {/* Projects Section */}
+        <section id="projects" className="px-6 md:px-12 max-w-7xl mx-auto py-20">
+            <motion.div 
+                className="flex flex-col md:flex-row justify-between items-end mb-16"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+            >
+                <div>
+                    <h2 className="text-4xl md:text-5xl font-bold mb-4">Selected Works</h2>
+                    <p className="text-gray-400">A curated list of projects I've worked on.</p>
+                </div>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {loading ? (
+                    [1,2,3].map((n) => (
+                        <div key={n} className="h-96 bg-white/5 rounded-2xl animate-pulse"></div>
+                    ))
+                ) : projects.length > 0 ? (
+                    projects.map((proj, i) => (
+                        <motion.a
+                            key={i}
+                            href={proj.figmaLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="group block"
+                            initial={{ opacity: 0, y: 50 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.1, duration: 0.6 }}
+                            whileHover={{ y: -10 }}
+                        >
+                            <div className="relative h-80 rounded-2xl overflow-hidden border border-white/10 bg-[#111]">
+                                <Image
+                                    src={proj.image}
+                                    alt={proj.title}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                    <span className="px-6 py-3 bg-white text-black rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">View Project</span>
+                                </div>
+                            </div>
+                            <div className="mt-5">
+                                <h3 className="text-xl font-bold group-hover:text-purple-400 transition-colors">{proj.title}</h3>
+                                <p className="text-sm text-gray-500 mt-1">{proj.description}</p>
+                            </div>
+                        </motion.a>
+                    ))
+                ) : (
+                    <div className="col-span-full text-center py-20 text-gray-500">
+                        <p>Projects are being updated. Check back soon!</p>
+                    </div>
+                )}
+            </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="py-32 px-6 md:px-12 text-center bg-gradient-to-b from-transparent to-[#0a0a0a]">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="max-w-3xl mx-auto"
+            >
+                <h2 className="text-5xl md:text-7xl font-bold mb-8">Have an idea?</h2>
+                <p className="text-xl text-gray-400 mb-12">
+                    I'm currently available for freelance work and open to new opportunities. 
+                    Let's create something meaningful together.
+                </p>
+                <div className="flex flex-wrap justify-center gap-6">
+                     <a 
+                        href="mailto:adityas131204@gmail.com" 
+                        className="px-8 py-4 bg-white text-black rounded-full font-bold hover:bg-purple-500 hover:text-white transition-all transform hover:scale-105"
+                     >
+                        Say Hello 👋
+                     </a>
+                     <div className="flex gap-4 items-center">
+                        <a href="https://instagram.com" className="p-4 bg-white/10 rounded-full hover:bg-white hover:text-black transition-all"><FaInstagram size={20}/></a>
+                     </div>
+                </div>
+            </motion.div>
+        </section>
+
       </main>
 
       {/* Footer */}
-      <motion.footer
-        className="border-t border-b-[#2e3f65] px-10 py-8"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="max-w-6xl mx-auto flex justify-center">
-          <p className="text-gray-400 text-sm">
-            © 2025 Aditya Shrivastav. All rights reserved.
-          </p>
-        </div>
-      </motion.footer>
+      <footer className="border-t border-white/10 py-8 text-center text-gray-600 text-sm">
+        <p>© 2025 Aditya Shrivastav. Crafted with <span className="text-red-500">❤</span> and Next.js.</p>
+      </footer>
     </div>
   );
 }
