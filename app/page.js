@@ -196,8 +196,7 @@ export default function Home() {
                         <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur-lg opacity-40"></div>
                         {/* Placeholder for Profile - Stylized */}
                         <div className="relative h-[400px] w-full bg-[#111] rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden">
-                             <span className="text-9xl font-black text-white/5 select-none">AS</span>
-                             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                            <img src="/images/professional_photo.png" width="300px" height="300px"/>
                         </div>
                     </div>
                 </motion.div>
@@ -312,7 +311,7 @@ export default function Home() {
                         Say Hello 👋
                      </a>
                      <div className="flex gap-4 items-center">
-                        <a href="https://instagram.com" className="p-4 bg-white/10 rounded-full hover:bg-white hover:text-black transition-all"><FaInstagram size={20}/></a>
+                        <a href="https://www.instagram.com/adityashrivastava536/" className="p-4 bg-white/10 rounded-full hover:bg-white hover:text-black transition-all"><FaInstagram size={20}/></a>
                      </div>
                 </div>
             </motion.div>
